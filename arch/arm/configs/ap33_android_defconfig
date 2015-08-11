@@ -1,3 +1,19 @@
+CONFIG_LOCALVERSION="-g7f360be_2A_XtheOne_01"
+CONFIG_LOCALVERSION_AUTO=n
+
+CONFIG_DEFAULT_HOSTNAME="(none)"
+
+# Skin Temperature throttling (default = 43 degrees)
+# set in board config (temp_throttle_skin = 43000)
+#CONFIG_TEGRA_SKIN_THROTTLE=y
+
+# Wakeup on volume keys
+#CONFIG_WAKEUP_VOL_KEYS=y
+
+# Enable UHID support
+CONFIG_UHID=y
+##
+
 CONFIG_EXPERIMENTAL=y
 CONFIG_IKCONFIG=y
 CONFIG_IKCONFIG_PROC=y
