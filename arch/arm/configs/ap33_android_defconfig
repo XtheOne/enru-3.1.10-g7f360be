@@ -6,6 +6,12 @@ CONFIG_DEFAULT_HOSTNAME="(none)"
 # USB Fast charge
 CONFIG_ENABLE_FAST_CHARGE=y
 
+# UltraFast charging with 2A charger
+CONFIG_USB_2A_CHARGER_DETECT=y
+
+# UltraFast 2A charging when in CAR_DOCK
+CONFIG_2A_CABLE_DETECT_CAR=y
+
 # Skin Temperature throttling (default = 43 degrees)
 # set in board config (temp_throttle_skin = 43000)
 #CONFIG_TEGRA_SKIN_THROTTLE=y

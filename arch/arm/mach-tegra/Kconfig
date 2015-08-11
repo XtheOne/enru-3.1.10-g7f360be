@@ -883,6 +883,13 @@ config HTC_PERFORMANCE_MONITOR_ALWAYS_ON
 	  ignore the debug flag KERNEL_FLAG_PM_MONITOR; always enable
 	  the htc performance monitor
 
+config 2A_CABLE_DETECT_CAR
+	tristate "UltraFast 2A charging when in CAR Dock"
+	depends on 2A_CHARGER_DETECT
+	default n
+	help
+	  Provides 2A CAR_DOCK charger configuration.
+
 config ENABLE_FAST_CHARGE
 	tristate "Enable fast charging from USB host"
 	default n

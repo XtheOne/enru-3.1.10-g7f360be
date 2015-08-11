@@ -55,6 +55,8 @@
 #define VBUS_WAKEUP_ENR 19
 extern int global_wakeup_state;
 
+extern int get_ultrafast_charge(void);
+
 #define	DRIVER_DESC	"Nvidia Tegra High-Speed USB SOC \
 					Device Controller driver"
 
@@ -95,7 +97,6 @@ static const u8 tegra_udc_test_packet[53] = {
 /* htc:remove static for cable_detect driver use */
 struct tegra_udc *the_udc;
 extern int USB_disabled;
-static int vbus_active_USB_disabled = 0;
 
 /* ++ htc ++ */
 static int reset_queues_mute(struct tegra_udc *udc);
@@ -1312,10 +1313,8 @@ static int tegra_vbus_session(struct usb_gadget *gadget, int is_active)
 		udc->connect_type = CONNECT_TYPE_NONE;
 		cancel_delayed_work_sync(&udc->ac_detect_work);
 		queue_work(udc->usb_wq, &udc->notifier_work);
-		vbus_active_USB_disabled = 0;
 		/* -- htc --*/
-	} else if ((!udc->vbus_active && is_active) ||
-			(udc->vbus_active && is_active && vbus_active_USB_disabled)) {
+	} else if (!udc->vbus_active && is_active) {
 		if (!USB_disabled) {
 			tegra_usb_phy_power_on(udc->phy);
 			/* setup the controller in the device mode */
@@ -1329,10 +1328,8 @@ static int tegra_vbus_session(struct usb_gadget *gadget, int is_active)
 			udc->vbus_active = 1;
 			/* start the controller */
 			dr_controller_run(udc);
-			vbus_active_USB_disabled = 0;
 		} else {
 			USB_INFO("%s (%d) USB_disable", __func__, is_active);
-			vbus_active_USB_disabled = 1;
 			tegra_usb_phy_power_on(udc->phy);
 			udc->vbus_active = 1;
 			udc->usb_state = USB_STATE_DEFAULT;
@@ -2190,10 +2187,12 @@ static void tegra_udc_set_current_limit_work(struct work_struct *work)
 						charger_work);
 	/* check udc regulator is available for drawing vbus current*/
 	if (udc->vbus_reg) {
+		USB_INFO("%s set the current limit in uA\n", __func__);
 		/* set the current limit in uA */
-		regulator_set_current_limit(
-			udc->vbus_reg, 0,
-			udc->current_limit * 1000);
+			if (get_ultrafast_charge())
+				regulator_set_current_limit( udc->vbus_reg, 0, USB_CHARGING_CURRENT_LIMIT_MA*2000);
+			else 
+				regulator_set_current_limit( udc->vbus_reg, 0, USB_CHARGING_CURRENT_LIMIT_MA*1000);
 	}
 }
 
@@ -2239,12 +2238,14 @@ static void tegra_udc_charger_detect_work(struct work_struct *work)
 	/* check for the platform charger detection */
 	if (tegra_usb_phy_charger_detected(udc->phy)) {
 		USB_INFO("USB compliant charger detected\n");
+
 		/* check udc regulator is available for drawing vbus current*/
 		if (udc->vbus_reg) {
 			/* set the current limit in uA */
-			regulator_set_current_limit(
-				udc->vbus_reg, 0,
-				USB_CHARGING_CURRENT_LIMIT_MA*1000);
+			if (get_ultrafast_charge())
+				regulator_set_current_limit( udc->vbus_reg, 0, USB_CHARGING_CURRENT_LIMIT_MA*2000);
+			else 
+				regulator_set_current_limit( udc->vbus_reg, 0, USB_CHARGING_CURRENT_LIMIT_MA*1000);
 		}
 	}
 
