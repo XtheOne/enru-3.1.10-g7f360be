@@ -372,19 +372,19 @@ static void tps80032_int_notifier_func(int int_reg, int value)
 		if (htc_batt_info.rep.charging_source == CHARGER_USB) {
 			wake_lock(&htc_batt_info.vbus_wake_lock);
 			if (!!(get_kernel_flag() & ALL_AC_CHARGING))
-				tps80032_charger_set_ctrl(POWER_SUPPLY_ENABLE_FAST_CHARGE);
+				htc_battery_set_charging(POWER_SUPPLY_ENABLE_FAST_CHARGE);
 			else
-				tps80032_charger_set_ctrl(POWER_SUPPLY_ENABLE_SLOW_CHARGE);
+				htc_battery_set_charging(POWER_SUPPLY_ENABLE_SLOW_CHARGE);
 			wake_unlock(&htc_batt_info.vbus_wake_lock);
 		} else if (!!(get_kernel_flag() & (SET_FAKE_FULL | SET_FAKE_TEMP)) || htc_batt_info.ac_8hour_count < 1) {
 			if (htc_batt_info.rep.charging_source == CHARGER_AC) {
 				wake_lock(&htc_batt_info.vbus_wake_lock);
-				tps80032_charger_set_ctrl(POWER_SUPPLY_ENABLE_FAST_CHARGE);
+				htc_battery_set_charging(POWER_SUPPLY_ENABLE_FAST_CHARGE);
 				htc_batt_info.ac_8hour_count++;
 				wake_unlock(&htc_batt_info.vbus_wake_lock);
 			} else if (htc_batt_info.rep.charging_source == CHARGER_2A_AC) {
 				wake_lock(&htc_batt_info.vbus_wake_lock);
-				tps80032_charger_set_ctrl(POWER_SUPPLY_ENABLE_FAST_HV_CHARGE);
+				htc_battery_set_charging(POWER_SUPPLY_ENABLE_FAST_HV_CHARGE);
 				htc_batt_info.ac_8hour_count++;
 				wake_unlock(&htc_batt_info.vbus_wake_lock);
 			}
@@ -561,17 +561,17 @@ static void reevaluate_charger(void)
 	if (htc_batt_info.rep.charging_source == CHARGER_USB) {
 		wake_lock(&htc_batt_info.vbus_wake_lock);
 		if (!!(get_kernel_flag() & ALL_AC_CHARGING))
-			tps80032_charger_set_ctrl(POWER_SUPPLY_ENABLE_FAST_CHARGE);
+			htc_battery_set_charging(POWER_SUPPLY_ENABLE_FAST_CHARGE);
 		else
-			tps80032_charger_set_ctrl(POWER_SUPPLY_ENABLE_SLOW_CHARGE);
+			htc_battery_set_charging(POWER_SUPPLY_ENABLE_SLOW_CHARGE);
 		wake_unlock(&htc_batt_info.vbus_wake_lock);
 	} else if (htc_batt_info.rep.charging_source == CHARGER_AC) {
 		wake_lock(&htc_batt_info.vbus_wake_lock);
-		tps80032_charger_set_ctrl(POWER_SUPPLY_ENABLE_FAST_CHARGE);
+		htc_battery_set_charging(POWER_SUPPLY_ENABLE_FAST_CHARGE);
 		wake_unlock(&htc_batt_info.vbus_wake_lock);
 	} else if (htc_batt_info.rep.charging_source == CHARGER_2A_AC) {
 		wake_lock(&htc_batt_info.vbus_wake_lock);
-		tps80032_charger_set_ctrl(POWER_SUPPLY_ENABLE_FAST_HV_CHARGE);
+		htc_battery_set_charging(POWER_SUPPLY_ENABLE_FAST_HV_CHARGE);
 		wake_unlock(&htc_batt_info.vbus_wake_lock);
 	}
 }
