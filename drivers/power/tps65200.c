@@ -495,6 +495,8 @@ int tps_set_charger_ctrl(u32 ctl)
 		tps65200_i2c_read_byte(&regh2, 0x0A); /* INT3 */
 		pr_tps_info("regh 0x08=%x, regh 0x09=%x, regh 0x0A=%x\n",
 				regh, regh1, regh2);
+		tps65200_i2c_read_byte(&regh, 0x04);
+		pr_tps_info("Switch charger CONFIG_D: regh 0x04=%x\n", regh);
 		tps65200_set_chg_stat(1);
 		break;
 	case ENABLE_LIMITED_CHG:
