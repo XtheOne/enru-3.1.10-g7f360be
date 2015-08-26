@@ -477,6 +477,9 @@ int tps_set_charger_ctrl(u32 ctl)
 		if (tps65200_low_chg)
 			regh |= 0x08;	/* enable low charge current */
 		tps65200_i2c_write_byte(regh, 0x03); /* CONFIG_C */
+		tps65200_i2c_read_byte(&regh, 0x04); /* CONFIG_D */
+		regh |= 0x0F;
+		tps65200_i2c_write_byte(regh, 0x04); /* CONFIG_D */
 		regh = 0xE3;
 #ifdef CONFIG_SUPPORT_DQ_BATTERY
 		if (htc_is_dq_pass)
@@ -493,8 +496,9 @@ int tps_set_charger_ctrl(u32 ctl)
 		tps65200_i2c_read_byte(&regh, 0x08); /* INT1 */
 		tps65200_i2c_read_byte(&regh1, 0x09); /* INT2 */
 		tps65200_i2c_read_byte(&regh2, 0x0A); /* INT3 */
-		pr_tps_info("regh 0x08=%x, regh 0x09=%x, regh 0x0A=%x\n",
-				regh, regh1, regh2);
+		tps65200_i2c_read_byte(&regh3, 0x04); /* CONFIG_D */
+		pr_tps_info("regh 0x08=%x, regh 0x09=%x, regh 0x0A=%x, regh 0x04=%x\n",
+				regh, regh1, regh2, regh3);
 		tps65200_i2c_read_byte(&regh, 0x04);
 		pr_tps_info("Switch charger CONFIG_D: regh 0x04=%x\n", regh);
 		tps65200_set_chg_stat(1);
