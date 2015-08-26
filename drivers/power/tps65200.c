@@ -465,14 +465,14 @@ int tps_set_charger_ctrl(u32 ctl)
 		break;
 	case POWER_SUPPLY_ENABLE_FAST_HV_CHARGE:
 		tps65200_dump_register();
-		tps65200_i2c_write_byte(0x59, 0x01); /* CONFIG_A */
+		tps65200_i2c_write_byte(0xF9, 0x01); /* CONFIG_A */
 		tps65200_i2c_write_byte(0x2A, 0x00); /* CONTROL */
 		/* set DPM regulation voltage to 4.44V */
-		regh = 0xC3;
+		regh = 0x83;
 #ifdef CONFIG_SUPPORT_DQ_BATTERY
 		if (htc_is_dq_pass)
 			/* set DPM regulation voltage to 4.6V */
-			regh = 0xC5;
+			regh = 0x85;
 #endif
 		if (tps65200_low_chg)
 			regh |= 0x08;	/* enable low charge current */
